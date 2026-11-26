@@ -4,11 +4,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        forest: '#102F25',
+        forest: '#15372B',
         ivory: '#F8F6F0',
-        champagne: '#C5A36A',
+        champagne: '#C6A46A',
         beige: '#EAE4D9',
-        charcoal: '#252824',
+        charcoal: '#252525',
       },
       fontFamily: {
         sans: ['DM Sans', 'sans-serif'],
