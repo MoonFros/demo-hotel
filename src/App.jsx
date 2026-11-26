@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowDown,
   ArrowRight,
   ArrowUpRight,
+  BedDouble,
   CalendarDays,
   Check,
   Copy,
@@ -11,7 +11,7 @@ import {
   Menu,
   MessageCircle,
   Phone,
-  Send,
+  UserRound,
   Users,
   X,
 } from 'lucide-react';
@@ -19,11 +19,15 @@ import { hotelImages, siteConfig } from './config/site.js';
 
 const navItems = [
   ['Home', '#home'],
+  ['About', '#about'],
   ['Rooms & Suites', '#rooms'],
-  ['Dining', '#dining'],
-  ['Facilities', '#facilities'],
-  ['About', '#experience'],
+  ['Location', '#location'],
   ['Contact', '#contact'],
+];
+
+const roomPlaceholders = [
+  { id: '01', image: hotelImages.roomOne, alt: 'Illustrative placeholder of a modest, tidy hotel room; not an actual Topmax room.' },
+  { id: '02', image: hotelImages.roomTwo, alt: 'Illustrative placeholder of a comfortable city-hotel room; not an actual Topmax room.' },
 ];
 
 function Reveal({ children, className = '', delay = 0, as: Element = 'div' }) {
@@ -44,7 +48,7 @@ function Reveal({ children, className = '', delay = 0, as: Element = 'div' }) {
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -32px 0px' },
+      { threshold: 0.12, rootMargin: '0px 0px -30px 0px' },
     );
 
     observer.observe(element);
@@ -62,13 +66,13 @@ function Reveal({ children, className = '', delay = 0, as: Element = 'div' }) {
   );
 }
 
-function SectionLabel({ children, dark = false }) {
-  return <p className={`section-label ${dark ? 'section-label--light' : ''}`}>{children}</p>;
+function SectionLabel({ children, light = false }) {
+  return <p className={`section-label ${light ? 'section-label--light' : ''}`}>{children}</p>;
 }
 
-function Wordmark({ light = false, compact = false }) {
+function Wordmark({ light = false }) {
   return (
-    <a className={`wordmark ${light ? 'wordmark--light' : ''} ${compact ? 'wordmark--compact' : ''}`} href="#home" aria-label={`${siteConfig.name}, home`}>
+    <a className={`wordmark ${light ? 'wordmark--light' : ''}`} href="#home" aria-label={`${siteConfig.name}, home`}>
       <span className="wordmark__symbol" aria-hidden="true">T</span>
       <span className="wordmark__text">
         <span className="wordmark__name">TOPMAX</span>
@@ -83,7 +87,7 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const updateHeader = () => setScrolled(window.scrollY > 30);
+    const updateHeader = () => setScrolled(window.scrollY > 28);
     updateHeader();
     window.addEventListener('scroll', updateHeader, { passive: true });
     return () => window.removeEventListener('scroll', updateHeader);
@@ -109,9 +113,7 @@ function Header() {
       <div className="site-header__inner page-container">
         <Wordmark light={!scrolled && !menuOpen} />
         <nav className="desktop-nav" aria-label="Main navigation">
-          {navItems.map(([label, href]) => (
-            <a key={label} href={href}>{label}</a>
-          ))}
+          {navItems.map(([label, href]) => <a key={label} href={href}>{label}</a>)}
           <a className="nav-book-button" href="#booking">Book a room <ArrowUpRight size={15} strokeWidth={1.7} /></a>
         </nav>
         <button
@@ -125,22 +127,17 @@ function Header() {
           {menuOpen ? <X size={23} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
         </button>
       </div>
-
       <div id="mobile-navigation" className={`mobile-nav ${menuOpen ? 'mobile-nav--open' : ''}`} aria-hidden={!menuOpen}>
         <div className="mobile-nav__top"><span>MENU</span><span>BDPA · BENIN CITY</span></div>
         <nav aria-label="Mobile navigation">
           {navItems.map(([label, href], index) => (
             <a key={label} href={href} onClick={closeMenu} tabIndex={menuOpen ? 0 : -1}>
-              <span className="mobile-nav__index">0{index + 1}</span>
-              <span>{label}</span>
-              <ArrowUpRight size={19} strokeWidth={1.4} />
+              <span className="mobile-nav__index">0{index + 1}</span><span>{label}</span><ArrowUpRight size={19} strokeWidth={1.4} />
             </a>
           ))}
         </nav>
-        <a className="mobile-nav__book" href="#booking" onClick={closeMenu} tabIndex={menuOpen ? 0 : -1}>
-          Plan your stay <ArrowUpRight size={18} />
-        </a>
-        <p className="mobile-nav__foot">A considered stay in Benin City.</p>
+        <a className="mobile-nav__book" href="#booking" onClick={closeMenu} tabIndex={menuOpen ? 0 : -1}>Book a room <ArrowUpRight size={18} /></a>
+        <p className="mobile-nav__foot">A comfortable base in Benin City.</p>
       </div>
     </header>
   );
@@ -149,24 +146,139 @@ function Header() {
 function Hero() {
   return (
     <section className="hero" id="home" aria-labelledby="hero-title">
-      <div className="hero__image" style={{ backgroundImage: `url("${hotelImages.hero}")` }} aria-hidden="true" />
+      <div className="hero__image" style={{ backgroundImage: `url("${hotelImages.building}")` }} aria-hidden="true" />
       <div className="hero__overlay" aria-hidden="true" />
       <div className="hero__inner page-container">
         <div className="hero__content">
-          <p className="hero__location"><MapPin size={14} strokeWidth={1.6} /> {siteConfig.locationLine}</p>
-          <h1 id="hero-title">Stay Somewhere<span>Worth Coming Back <em>To.</em></span></h1>
-          <p className="hero__intro">Discover comfort, convenience and warm hospitality at Topmax Executive Hotel & Suites.</p>
+          <p className="hero__location"><MapPin size={15} strokeWidth={1.6} /> BDPA <span>·</span> NEAR UNIBEN <span>·</span> BENIN CITY</p>
+          <h1 id="hero-title">A Comfortable Place to <em>Call Home,</em><span>Even for a Night.</span></h1>
+          <p className="hero__intro">Discover comfortable accommodation and convenient stays at Topmax Executive Hotel & Suites.</p>
           <div className="hero__actions">
             <a className="button button--gold" href="#rooms">Explore our rooms <ArrowUpRight size={17} strokeWidth={1.7} /></a>
-            <a className="button button--text-light" href="#contact">Make an enquiry <ArrowRight size={17} strokeWidth={1.6} /></a>
+            <a className="button button--text-light" href="#booking">Make an enquiry <ArrowRight size={17} strokeWidth={1.6} /></a>
           </div>
         </div>
         <div className="hero__bottom">
-          <a className="scroll-cue" href="#experience"><span className="scroll-cue__icon"><ArrowDown size={15} strokeWidth={1.5} /></span><span>Scroll to discover</span></a>
-          <p className="image-credit">Illustrative hotel photography · not a property image</p>
+          <a className="scroll-cue" href="#about"><span className="scroll-cue__icon"><ArrowRight size={14} strokeWidth={1.5} /></span><span>Get to know Topmax</span></a>
+          <p className="image-credit">Illustrative building placeholder · actual Topmax photo not supplied</p>
         </div>
       </div>
-      <div className="hero__folio" aria-hidden="true"><span>TOPMAX</span><span>01 — 06</span></div>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <section className="about section-space" id="about">
+      <div className="page-container about__grid">
+        <Reveal className="about__copy">
+          <SectionLabel>ABOUT THE HOTEL</SectionLabel>
+          <h2>Comfort Meets <em>Convenience.</em></h2>
+          <p className="about__lead">A welcoming place to stay in BDPA, close to the University of Benin.</p>
+          <p className="about__body">Topmax Executive Hotel & Suites is a practical base for visitors to Benin City—whether you’re travelling for work, visiting family, or coming to see a student at UNIBEN. Share what you need before you arrive, and ask the hotel directly about current room options and rates.</p>
+          <a className="text-link" href="#rooms">See room information <ArrowUpRight size={16} strokeWidth={1.6} /></a>
+        </Reveal>
+        <Reveal className="about__visual" delay={120}>
+          <figure className="editorial-photo">
+            <img src={hotelImages.reception} alt="Illustrative placeholder of a simple hotel reception; not Topmax's actual reception" loading="lazy" />
+            <figcaption>Illustrative reception image · replace with approved Topmax photo</figcaption>
+          </figure>
+          <div className="about__location-mark"><MapPin size={15} /><span>BDPA<br />BENIN CITY</span></div>
+          <span className="about__rule" aria-hidden="true" />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function RoomCard({ room }) {
+  return (
+    <article className="room-card">
+      <figure className="room-card__photo">
+        <img src={room.image} alt={room.alt} loading="lazy" />
+        <figcaption>Illustrative room photo · not an actual Topmax room</figcaption>
+      </figure>
+      <div className="room-card__body">
+        <div className="room-card__overline"><span>ROOM {room.id}</span><span>DETAILS PENDING</span></div>
+        <h3>Room category to be confirmed</h3>
+        <p>Room names and descriptions haven’t been supplied yet. Enquire for current room options and rates before you plan your stay.</p>
+        <div className="room-card__facts">
+          <div><span>AMENITIES</span><b>To be confirmed</b></div>
+          <div><span>ROOM RATE</span><b>Ask the hotel</b></div>
+        </div>
+        <a className="room-card__link" href="#booking">Enquire about this room <ArrowUpRight size={16} strokeWidth={1.6} /></a>
+      </div>
+    </article>
+  );
+}
+
+function Rooms() {
+  return (
+    <section className="rooms section-space" id="rooms">
+      <div className="page-container">
+        <Reveal className="rooms__heading">
+          <div>
+            <SectionLabel>ROOMS & SUITES</SectionLabel>
+            <h2>Find a Room That <em>Suits Your Stay.</em></h2>
+          </div>
+          <p>Choose a stay that works for your visit. Verified room names, amenities and rates will be added as soon as the hotel provides them.</p>
+        </Reveal>
+        <div className="rooms__grid">
+          {roomPlaceholders.map((room, index) => <Reveal key={room.id} delay={index * 100}><RoomCard room={room} /></Reveal>)}
+        </div>
+        <p className="rooms__note"><BedDouble size={15} /> Placeholder photography only. No room type, amenity or price is being represented as confirmed.</p>
+      </div>
+    </section>
+  );
+}
+
+const stayReasons = [
+  {
+    number: '01',
+    title: 'A convenient address',
+    text: 'In BDPA, near the University of Benin—well placed for visits around the city.',
+    icon: MapPin,
+  },
+  {
+    number: '02',
+    title: 'Comfort & cleanliness',
+    text: 'Comfortable accommodation, with a clean and straightforward feel at the heart of the stay.',
+    icon: BedDouble,
+  },
+  {
+    number: '03',
+    title: 'Your own space',
+    text: 'Room for privacy and a pause between family visits, work or travel.',
+    icon: UserRound,
+  },
+  {
+    number: '04',
+    title: 'Clear, welcoming enquiries',
+    text: 'A straightforward way to ask about room options and current rates before you make a plan.',
+    icon: MessageCircle,
+  },
+];
+
+function WhyStay() {
+  return (
+    <section className="why section-space" id="why-stay">
+      <div className="page-container">
+        <Reveal className="why__heading">
+          <SectionLabel>WHY STAY WITH US?</SectionLabel>
+          <h2>Thoughtful about <em>the things that matter.</em></h2>
+          <p>Comfort, convenience and straightforward information—without promises about unconfirmed facilities.</p>
+        </Reveal>
+        <div className="why__grid">
+          {stayReasons.map(({ number, title, text, icon: Icon }, index) => (
+            <Reveal key={number} className="why-item" delay={index * 70}>
+              <div className="why-item__top"><span>{number}</span><Icon size={20} strokeWidth={1.4} aria-hidden="true" /></div>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </Reveal>
+          ))}
+        </div>
+        <div className="why__value-note"><span>VALUE, WITHOUT GUESSWORK</span><p>Room prices are not published until confirmed. Contact the hotel for current rates.</p></div>
+      </div>
     </section>
   );
 }
@@ -182,29 +294,21 @@ function routeEnquiry(message, setResult) {
   const encodedMessage = encodeURIComponent(message);
   if (siteConfig.whatsapp.trim()) {
     window.open(`https://wa.me/${siteConfig.whatsapp.trim()}?text=${encodedMessage}`, '_blank', 'noopener,noreferrer');
-    setResult({
-      text: 'A WhatsApp draft is open. Review it and press send there to complete your enquiry.',
-      draft: '',
-    });
+    setResult({ text: 'A WhatsApp draft is open. Review it and press send there to complete your enquiry.', draft: '' });
     return;
   }
-
   if (siteConfig.email.trim()) {
-    window.location.href = `mailto:${siteConfig.email.trim()}?subject=${encodeURIComponent('Enquiry for Topmax Executive Hotel & Suites')}&body=${encodedMessage}`;
-    setResult({
-      text: 'Your email app has opened with this enquiry. Review and send it there to complete your request.',
-      draft: '',
-    });
+    window.location.href = `mailto:${siteConfig.email.trim()}?subject=${encodeURIComponent('Room enquiry for Topmax Executive Hotel & Suites')}&body=${encodedMessage}`;
+    setResult({ text: 'Your email app has opened with this enquiry. Review and send it there to complete your request.', draft: '' });
     return;
   }
-
   setResult({
-    text: 'Contact details have not yet been provided for this page. This enquiry has not been sent; copy the prepared message below and keep it ready.',
+    text: 'The hotel’s WhatsApp and email details have not been provided for this page. Your enquiry has not been sent; copy the prepared message below.',
     draft: message,
   });
 }
 
-function EnquiryResult({ result, className = '' }) {
+function EnquiryResult({ result }) {
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
 
@@ -226,15 +330,14 @@ function EnquiryResult({ result, className = '' }) {
   };
 
   return (
-    <div className={`enquiry-result ${className}`} role="status" aria-live="polite">
+    <div className="enquiry-result" role="status" aria-live="polite">
       <p>{result.text}</p>
       {result.draft && (
         <>
-          <label className="sr-only" htmlFor={`enquiry-draft-${className || 'booking'}`}>Prepared enquiry</label>
-          <textarea id={`enquiry-draft-${className || 'booking'}`} value={result.draft} readOnly rows={4} />
+          <label className="sr-only" htmlFor="prepared-enquiry">Prepared enquiry</label>
+          <textarea id="prepared-enquiry" value={result.draft} readOnly rows={5} />
           <button className="copy-button" type="button" onClick={copyDraft}>
-            {copied ? <Check size={15} /> : <Copy size={15} />}
-            {copied ? 'Copied to clipboard' : 'Copy enquiry'}
+            {copied ? <Check size={15} /> : <Copy size={15} />}{copied ? 'Copied to clipboard' : 'Copy enquiry'}
           </button>
           {copyFailed && <p className="enquiry-result__hint">Copy was blocked by your browser. Select the text above and copy it manually.</p>}
         </>
@@ -243,150 +346,72 @@ function EnquiryResult({ result, className = '' }) {
   );
 }
 
-function BookingForm() {
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
-  const [guests, setGuests] = useState('');
-  const [preference, setPreference] = useState('No specific preference');
+function Booking() {
+  const [values, setValues] = useState({
+    name: '',
+    guestPhone: '',
+    roomPreference: 'No specific preference',
+    checkIn: '',
+    checkOut: '',
+    guests: '',
+    message: '',
+  });
   const [result, setResult] = useState(null);
   const today = localDateValue();
 
+  const updateField = (event) => {
+    setValues((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setResult(null);
+  };
+
   const submitBooking = (event) => {
     event.preventDefault();
-    setResult(null);
-
-    if (checkOut <= checkIn) {
+    if (values.checkOut <= values.checkIn) {
       setResult({ text: 'Please choose a check-out date that is after your check-in date.' });
       return;
     }
 
     const message = [
-      `Hello, I would like to enquire about a stay at ${siteConfig.name}.`,
-      `Check-in: ${checkIn}`,
-      `Check-out: ${checkOut}`,
-      `Guests: ${guests}`,
-      `Room preference: ${preference}`,
-      'Please let me know about availability and current room details.',
+      `Booking enquiry for ${siteConfig.name}`,
+      `Guest name: ${values.name}`,
+      `Guest phone: ${values.guestPhone}`,
+      `Preferred room category: ${values.roomPreference}`,
+      `Check-in: ${values.checkIn}`,
+      `Check-out: ${values.checkOut}`,
+      `Number of guests: ${values.guests}`,
+      `Additional message: ${values.message.trim() || 'None'}`,
     ].join('\n');
     routeEnquiry(message, setResult);
   };
 
   return (
-    <section className="booking-wrap page-container" id="booking" aria-label="Enquire about a stay">
-      <div className="booking-card">
-        <div className="booking-card__heading">
-          <div>
-            <SectionLabel>PLAN YOUR STAY</SectionLabel>
-            <p>Share your dates and we’ll help you take the next step.</p>
-          </div>
-          <span className="booking-card__note">ENQUIRY · NOT LIVE AVAILABILITY</span>
-        </div>
-        <form className="booking-form" onSubmit={submitBooking}>
-          <label className="booking-field">
-            <span className="booking-field__label">Check-in</span>
-            <span className="booking-field__input"><CalendarDays size={17} strokeWidth={1.5} /><input aria-label="Check-in date" type="date" value={checkIn} min={today} onChange={(event) => { setCheckIn(event.target.value); setResult(null); }} required /></span>
-          </label>
-          <label className="booking-field">
-            <span className="booking-field__label">Check-out</span>
-            <span className="booking-field__input"><CalendarDays size={17} strokeWidth={1.5} /><input aria-label="Check-out date" type="date" value={checkOut} min={checkIn || today} onChange={(event) => { setCheckOut(event.target.value); setResult(null); }} required /></span>
-          </label>
-          <label className="booking-field booking-field--guests">
-            <span className="booking-field__label">Guests</span>
-            <span className="booking-field__input"><Users size={17} strokeWidth={1.5} /><input aria-label="Number of guests" type="number" min="1" step="1" placeholder="Select" value={guests} onChange={(event) => { setGuests(event.target.value); setResult(null); }} required /></span>
-          </label>
-          <label className="booking-field booking-field--preference">
-            <span className="booking-field__label">Room preference</span>
-            <span className="booking-field__input"><select aria-label="Room preference" value={preference} onChange={(event) => setPreference(event.target.value)}><option>No specific preference</option><option>I’ll share a preference in my enquiry</option></select></span>
-          </label>
-          <button className="booking-submit" type="submit">Check availability <ArrowUpRight size={17} strokeWidth={1.6} /></button>
-        </form>
-        <EnquiryResult result={result} className="booking" />
-      </div>
-    </section>
-  );
-}
-
-function Introduction() {
-  return (
-    <section className="intro section-space" id="experience">
-      <div className="page-container intro__grid">
-        <Reveal className="intro__copy">
-          <SectionLabel>THE TOPMAX EXPERIENCE</SectionLabel>
-          <h2>More Than Just a <em>Place to Stay.</em></h2>
-          <p className="intro__lead">A welcoming address in BDPA, close to the University of Benin and the rhythm of Benin City.</p>
-          <p className="intro__body">Topmax Executive Hotel & Suites offers a convenient base for your time in the city. Whether you’re visiting for study, work or a personal trip, we’re here to make finding your stay feel straightforward. Room details and services have not yet been supplied for this page; please enquire for current information.</p>
-          <a className="underlined-link" href="#rooms">Explore the stay <ArrowUpRight size={16} strokeWidth={1.6} /></a>
+    <section className="booking-section section-space" id="booking">
+      <div className="page-container booking-section__grid">
+        <Reveal className="booking-section__intro">
+          <SectionLabel light>BOOK A ROOM</SectionLabel>
+          <h2>Tell us what <em>you need.</em></h2>
+          <p>Share your dates and room preference. This is an enquiry form, not an automated availability checker—the hotel will confirm room options and rates.</p>
+          <div className="booking-section__promise"><span>01</span><p>No instant booking claims.<br />Just a clear request to the hotel.</p></div>
+          <div className="booking-section__contact-hint"><MessageCircle size={17} /><span>Configured contact details are required before enquiries can be sent from this page.</span></div>
         </Reveal>
-        <Reveal className="intro__visual" delay={140}>
-          <div className="intro__visual-image">
-            <img src={hotelImages.interior} alt="Illustrative hotel interior; not a photograph of Topmax Executive Hotel & Suites" loading="lazy" />
-            <span className="photo-note">Illustrative imagery · actual property photos to come</span>
-          </div>
-          <div className="intro__vertical-note"><span>BDPA</span><span>BENIN CITY · NIGERIA</span></div>
-          <div className="intro__gold-mark" aria-hidden="true" />
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-function Rooms() {
-  return (
-    <section className="rooms section-space" id="rooms">
-      <div className="page-container">
-        <Reveal className="section-heading rooms__heading">
-          <div>
-            <SectionLabel>ROOMS & SUITES</SectionLabel>
-            <h2>Find Your Perfect <em>Stay.</em></h2>
-          </div>
-          <p>Comfortable spaces designed to make every stay worthwhile.</p>
-        </Reveal>
-
-        <div className="rooms-editorial">
-          <Reveal className="room-photo room-photo--main">
-            <img src={hotelImages.roomOne} alt="Illustrative guest room photograph; room category and features at Topmax are to be confirmed" loading="lazy" />
-            <span className="photo-note">Illustrative photography · not a Topmax room</span>
-            <span className="room-photo__index">01 <i>/ ACCOMMODATION</i></span>
-          </Reveal>
-          <Reveal className="room-copy" delay={90}>
-            <SectionLabel>YOUR STAY, YOUR WAY</SectionLabel>
-            <h3>Room details, <em>coming into focus.</em></h3>
-            <p>Room categories, inclusions and rates have not yet been supplied for this page. These images are illustrative placeholders—not a representation of a specific Topmax room.</p>
-            <a className="underlined-link" href="#contact">Ask about rooms <ArrowUpRight size={16} strokeWidth={1.6} /></a>
-            <div className="room-copy__foot"><span>ROOM CATEGORIES</span><span>TO BE CONFIRMED</span></div>
-          </Reveal>
-          <Reveal className="room-photo room-photo--secondary" delay={160}>
-            <img src={hotelImages.roomTwo} alt="Illustrative hotel bedroom; actual room photography and details are not yet supplied" loading="lazy" />
-            <span className="photo-note">Illustrative photography · details to be confirmed</span>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Facilities() {
-  return (
-    <section className="facilities section-space" id="facilities">
-      <div className="page-container facilities__grid">
-        <Reveal className="facilities__copy">
-          <SectionLabel dark>FACILITIES & EXPERIENCES</SectionLabel>
-          <h2>Good to know. <em>Worth getting right.</em></h2>
-          <p>Facility and service details have not yet been supplied for this page. To keep it accurate, we won’t list amenities until they’re verified. Please ask the hotel for the latest details before you plan your stay.</p>
-          <div className="facilities__dining-note" id="dining"><span>DINING</span><p>Dining details have not yet been supplied for this page.</p></div>
-          <a className="button button--outline-light" href="#contact">Enquire about facilities <ArrowUpRight size={17} strokeWidth={1.6} /></a>
-          <span className="facilities__disclaimer">Verified information will be added here.</span>
-        </Reveal>
-        <Reveal className="facilities__visual" delay={120}>
-          <figure className="facilities__image facilities__image--large">
-            <img src={hotelImages.lounge} alt="Illustrative contemporary hospitality interior; not a confirmed Topmax facility" loading="lazy" />
-            <figcaption>Illustrative hospitality imagery · facility not confirmed</figcaption>
-          </figure>
-          <figure className="facilities__image facilities__image--small">
-            <img src={hotelImages.interior} alt="Illustrative hotel interior used as a visual placeholder" loading="lazy" />
-            <figcaption>Placeholder imagery</figcaption>
-          </figure>
-          <div className="facilities__image-stamp"><span>WHAT’S<br />ON SITE?</span><span>LET’S CONFIRM<br />TOGETHER</span></div>
+        <Reveal className="booking-panel" delay={100}>
+          <form className="booking-form" onSubmit={submitBooking}>
+            <div className="booking-form__heading"><span>STAY ENQUIRY</span><span>ALL FIELDS MARKED * ARE REQUIRED</span></div>
+            <div className="booking-form__grid">
+              <label className="form-field"><span>Guest name <i>*</i></span><input name="name" value={values.name} onChange={updateField} type="text" autoComplete="name" placeholder="Your full name" required /></label>
+              <label className="form-field"><span>Phone number <i>*</i></span><input name="guestPhone" value={values.guestPhone} onChange={updateField} type="tel" inputMode="tel" autoComplete="tel" minLength="7" placeholder="Your contact number" required /></label>
+              <label className="form-field"><span>Preferred room category</span><select name="roomPreference" value={values.roomPreference} onChange={updateField}><option>No specific preference</option><option>I have a room type in mind</option></select></label>
+              <label className="form-field"><span>Number of guests <i>*</i></span><span className="field-with-icon"><Users size={16} /><input name="guests" value={values.guests} onChange={updateField} type="number" min="1" step="1" placeholder="Select guests" required /></span></label>
+              <label className="form-field"><span>Check-in date <i>*</i></span><span className="field-with-icon"><CalendarDays size={16} /><input name="checkIn" value={values.checkIn} onChange={updateField} type="date" min={today} required /></span></label>
+              <label className="form-field"><span>Check-out date <i>*</i></span><span className="field-with-icon"><CalendarDays size={16} /><input name="checkOut" value={values.checkOut} onChange={updateField} type="date" min={values.checkIn || today} required /></span></label>
+              <label className="form-field form-field--full"><span>Additional message</span><textarea name="message" value={values.message} onChange={updateField} rows="3" placeholder="Any questions or details you’d like to share?" /></label>
+            </div>
+            <div className="booking-form__submit-row">
+              <button className="button button--green" type="submit">Send booking enquiry <ArrowUpRight size={17} strokeWidth={1.6} /></button>
+              <span>Your details are included only in the enquiry you prepare.</span>
+            </div>
+            <EnquiryResult result={result} />
+          </form>
         </Reveal>
       </div>
     </section>
@@ -399,169 +424,60 @@ function Location() {
 
   return (
     <section className="location section-space" id="location">
-      <div className="page-container location__grid">
-        <Reveal className="location__copy">
-          <SectionLabel dark>FIND US IN BENIN CITY</SectionLabel>
-          <h2>Perfectly Placed for Your <em>Next Stay.</em></h2>
-          <p>Set in BDPA, near the University of Benin—an easy point of reference for your time in Benin City.</p>
-          <div className="location__facts">
-            <div><span className="location__fact-no">01</span><span><b>BDPA</b><small>Benin City, Edo State</small></span></div>
-            <div><span className="location__fact-no">02</span><span><b>Near UNIBEN</b><small>University of Benin</small></span></div>
-          </div>
-          <a className="button button--gold location__directions" href={directionsUrl} target="_blank" rel="noreferrer">Get directions <ArrowUpRight size={17} strokeWidth={1.6} /></a>
-          <p className="location__fineprint">Map shows the BDPA area only; the hotel’s exact pin and street address are awaiting confirmation.</p>
+      <div className="page-container">
+        <Reveal className="location__heading">
+          <div><SectionLabel>LOCATION</SectionLabel><h2>Stay Close to Where <em>You Need to Be.</em></h2></div>
+          <p>BDPA, near the University of Benin—an easy landmark for your visit to Benin City.</p>
         </Reveal>
-        <Reveal className="map-frame" delay={120}>
-          <iframe
-            title="Google Maps search for BDPA, Benin City"
-            src={mapSrc}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
-          <div className="map-frame__tag"><MapPin size={15} /> BDPA AREA · BENIN CITY</div>
-          <div className="map-frame__note">Approximate area · hotel pin to be confirmed</div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-function GuestStories() {
-  return (
-    <section className="stories section-space" aria-labelledby="stories-heading">
-      <div className="page-container stories__layout">
-        <Reveal className="stories__intro">
-          <SectionLabel>GUEST STORIES</SectionLabel>
-          <h2 id="stories-heading">Experiences Worth <em>Remembering.</em></h2>
-          <p>We believe the best stories are shared in a guest’s own words.</p>
-        </Reveal>
-        <Reveal className="stories__empty" delay={120}>
-          <span className="stories__line" aria-hidden="true" />
-          <div className="stories__message">
-            <span className="stories__status">A NOTE ON REVIEWS</span>
-            <p>Verified guest feedback will appear here once it has been supplied. No reviews or ratings have been published on this page.</p>
-            <a className="underlined-link" href="#contact">Planning a visit? <ArrowUpRight size={16} strokeWidth={1.6} /></a>
-          </div>
-          <span className="stories__mark" aria-hidden="true">T</span>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-function CallToAction() {
-  return (
-    <section className="closing" aria-labelledby="closing-title">
-      <div className="closing__image" style={{ backgroundImage: `url("${hotelImages.closing}")` }} aria-hidden="true" />
-      <div className="closing__shade" aria-hidden="true" />
-      <div className="page-container closing__content">
-        <Reveal>
-          <SectionLabel dark>MAKE BENIN CITY YOUR NEXT STOP</SectionLabel>
-          <h2 id="closing-title">Your Next Stay <em>Starts Here.</em></h2>
-          <p>Make your next visit to Benin City a comfortable one.</p>
-          <div className="closing__actions">
-            <a className="button button--gold" href="#booking">Book your stay <ArrowUpRight size={17} strokeWidth={1.6} /></a>
-            <a className="button button--text-light" href="#contact">Contact us <ArrowRight size={17} strokeWidth={1.6} /></a>
-          </div>
-        </Reveal>
-      </div>
-      <p className="closing__image-note">Illustrative hotel exterior · not a photograph of the property</p>
-    </section>
-  );
-}
-
-function ContactDetails() {
-  const phoneDigits = siteConfig.phone.replace(/[^\d+]/g, '');
-
-  return (
-    <div className="contact-details">
-      <p className="contact-details__label">CONTACT DETAILS</p>
-      <div className="contact-detail">
-        <span className="contact-detail__icon"><MapPin size={17} strokeWidth={1.5} /></span>
-        <div><span>LOCATION</span><p>{siteConfig.address}</p></div>
-      </div>
-      {siteConfig.phone ? (
-        <a className="contact-detail" href={`tel:${phoneDigits}`}>
-          <span className="contact-detail__icon"><Phone size={17} strokeWidth={1.5} /></span>
-          <div><span>TELEPHONE</span><p>{siteConfig.phone}</p></div>
-        </a>
-      ) : (
-        <div className="contact-detail contact-detail--pending">
-          <span className="contact-detail__icon"><Phone size={17} strokeWidth={1.5} /></span>
-          <div><span>TELEPHONE</span><p>Contact number to be confirmed</p></div>
+        <div className="location__grid">
+          <Reveal className="location__details">
+            <div className="location__address-icon"><MapPin size={20} strokeWidth={1.5} /></div>
+            <span className="location__overline">ADDRESS PROVIDED</span>
+            <h3>{siteConfig.address}</h3>
+            <p>The full street address and exact hotel pin have not been supplied yet. The map below points to the BDPA area only.</p>
+            <a className="button button--green" href={directionsUrl} target="_blank" rel="noreferrer">Get directions <ArrowUpRight size={17} strokeWidth={1.6} /></a>
+          </Reveal>
+          <Reveal className="map-frame" delay={110}>
+            <iframe title="Google Maps area search for BDPA, Benin City" src={mapSrc} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            <div className="map-frame__tag"><MapPin size={15} /> BDPA · NEAR UNIBEN</div>
+            <div className="map-frame__note">Approximate area · exact hotel pin pending</div>
+          </Reveal>
         </div>
-      )}
-      {siteConfig.email ? (
-        <a className="contact-detail" href={`mailto:${siteConfig.email}`}>
-          <span className="contact-detail__icon"><Mail size={17} strokeWidth={1.5} /></span>
-          <div><span>EMAIL</span><p>{siteConfig.email}</p></div>
-        </a>
-      ) : (
-        <div className="contact-detail contact-detail--pending">
-          <span className="contact-detail__icon"><Mail size={17} strokeWidth={1.5} /></span>
-          <div><span>EMAIL</span><p>Email address to be confirmed</p></div>
-        </div>
-      )}
-      {siteConfig.whatsapp ? (
-        <a className="contact-whatsapp" href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noreferrer"><MessageCircle size={17} /> WhatsApp the hotel <ArrowUpRight size={15} /></a>
-      ) : (
-        <a className="contact-whatsapp contact-whatsapp--pending" href="#contact-form"><MessageCircle size={17} /> WhatsApp details to be confirmed <ArrowRight size={15} /></a>
-      )}
-    </div>
+      </div>
+    </section>
   );
 }
 
-function ContactForm() {
-  const [result, setResult] = useState(null);
-
-  const submitContact = (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const values = new FormData(form);
-    const message = [
-      `Hello, I’m ${values.get('name')}.`,
-      `My email: ${values.get('email')}`,
-      '',
-      values.get('message'),
-    ].join('\n');
-    routeEnquiry(message, setResult);
-  };
-
+function ContactMethod({ icon: Icon, label, value, href, note, external = false }) {
   return (
-    <form className="contact-form" id="contact-form" onSubmit={submitContact}>
-      <div className="contact-form__intro">
-        <div><SectionLabel>WE’RE HERE TO HELP</SectionLabel><h3>Send us a note.</h3></div>
-        <Send size={20} strokeWidth={1.4} aria-hidden="true" />
-      </div>
-      <p className="contact-form__note">No hotel email or WhatsApp details have been supplied for this page. Until a channel is configured, your message will be prepared for copying—not sent.</p>
-      <div className="contact-form__row">
-        <label className="form-field"><span>Your name</span><input type="text" name="name" autoComplete="name" placeholder="How should we address you?" required /></label>
-        <label className="form-field"><span>Email address</span><input type="email" name="email" autoComplete="email" placeholder="you@example.com" required /></label>
-      </div>
-      <label className="form-field"><span>Your message</span><textarea name="message" rows="4" placeholder="Tell us what you’d like to know…" required /></label>
-      <div className="contact-form__submit-row">
-        <button className="button button--green" type="submit">Prepare enquiry <ArrowUpRight size={17} strokeWidth={1.6} /></button>
-        <span>We’ll only use the details you enter to prepare your enquiry.</span>
-      </div>
-      <EnquiryResult result={result} className="contact" />
-    </form>
+    <article className="contact-method">
+      <span className="contact-method__icon"><Icon size={19} strokeWidth={1.5} /></span>
+      <span className="contact-method__label">{label}</span>
+      {href ? <a className="contact-method__value" href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>{value}<ArrowUpRight size={15} /></a> : <span className="contact-method__value contact-method__value--pending">{value}</span>}
+      {note && <p>{note}</p>}
+    </article>
   );
 }
 
 function Contact() {
+  const phoneDigits = siteConfig.phone.replace(/[^\d+]/g, '');
+  const whatsappHref = siteConfig.whatsapp ? `https://wa.me/${siteConfig.whatsapp}` : '#booking';
+  const emailHref = siteConfig.email ? `mailto:${siteConfig.email}` : undefined;
+
   return (
     <section className="contact section-space" id="contact">
-      <div className="page-container contact__grid">
-        <Reveal className="contact__intro">
-          <SectionLabel>GET IN TOUCH</SectionLabel>
-          <h2>Let’s make your next visit <em>feel simple.</em></h2>
-          <p>Ask about room availability, current facilities or anything you’d like to know before arriving. We’ll make it easy to find the right information.</p>
-          <ContactDetails />
+      <div className="page-container">
+        <Reveal className="contact__heading">
+          <div><SectionLabel>CONTACT TOPMAX</SectionLabel><h2>Let’s make your <em>stay simple.</em></h2></div>
+          <p>Need to ask about a room, current rates or getting here? Reach out through a verified contact channel, or start with a booking enquiry.</p>
         </Reveal>
-        <Reveal className="contact__form-wrap" delay={100}>
-          <ContactForm />
-        </Reveal>
+        <div className="contact__methods">
+          <ContactMethod icon={Phone} label="TELEPHONE" value={siteConfig.phone || 'Number to be confirmed'} href={siteConfig.phone ? `tel:${phoneDigits}` : undefined} note={siteConfig.phone ? 'Call the hotel' : 'Hotel telephone details have not been supplied.'} />
+          <ContactMethod icon={MessageCircle} label="WHATSAPP" value={siteConfig.whatsapp ? 'Message the hotel' : 'Number to be confirmed'} href={whatsappHref} external={Boolean(siteConfig.whatsapp)} note={siteConfig.whatsapp ? 'Enquiries open in WhatsApp' : 'Use the form until a number is provided.'} />
+          <ContactMethod icon={Mail} label="EMAIL" value={siteConfig.email || 'Email to be confirmed'} href={emailHref} note={siteConfig.email ? 'Send a direct enquiry' : 'Email details have not been supplied.'} />
+          <ContactMethod icon={MapPin} label="LOCATION" value="BDPA · Near UNIBEN" href="#location" note="Benin City, Edo State, Nigeria" />
+        </div>
+        <div className="contact__bottom-line"><span>Have dates in mind?</span><a className="button button--green" href="#booking">Make an enquiry <ArrowUpRight size={16} /></a></div>
       </div>
     </section>
   );
@@ -575,27 +491,23 @@ function Footer() {
         <div className="site-footer__main">
           <div className="site-footer__brand-col">
             <Wordmark light />
-            <p>A considered stay in BDPA, near the University of Benin, Benin City.</p>
-            <a className="footer-whatsapp" href={siteConfig.whatsapp ? `https://wa.me/${siteConfig.whatsapp}` : '#contact-form'} target={siteConfig.whatsapp ? '_blank' : undefined} rel={siteConfig.whatsapp ? 'noreferrer' : undefined}>
-              <MessageCircle size={17} /> {siteConfig.whatsapp ? 'WhatsApp enquiries' : 'WhatsApp contact to be confirmed'} <ArrowUpRight size={15} />
-            </a>
+            <p>Comfortable accommodation in BDPA, near the University of Benin, Benin City.</p>
+            <span className="site-footer__address">BDPA, Benin City<br />Edo State, Nigeria</span>
           </div>
-          <div className="site-footer__links-col">
+          <div>
             <span className="footer-heading">EXPLORE</span>
-            <div className="footer-links">
-              <a href="#home">Home</a><a href="#rooms">Rooms & Suites</a><a href="#facilities">Facilities</a><a href="#experience">About Topmax</a><a href="#location">Location</a>
-            </div>
+            <div className="footer-links"><a href="#home">Home</a><a href="#about">About</a><a href="#rooms">Rooms & Suites</a><a href="#location">Location</a><a href="#contact">Contact</a></div>
           </div>
-          <div className="site-footer__contact-col">
-            <span className="footer-heading">SAY HELLO</span>
+          <div>
+            <span className="footer-heading">CONTACT</span>
             <div className="footer-links">
-              {siteConfig.phone ? <a href={`tel:${phoneDigits}`}>{siteConfig.phone}</a> : <span>Telephone · to be confirmed</span>}
+              {siteConfig.phone ? <a href={`tel:${phoneDigits}`}>{siteConfig.phone}</a> : <span>Phone · to be confirmed</span>}
               {siteConfig.email ? <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a> : <span>Email · to be confirmed</span>}
-              <span>BDPA, near UNIBEN<br />Benin City, Edo State, Nigeria</span>
+              <a href="#booking">Make an enquiry <ArrowUpRight size={13} /></a>
             </div>
           </div>
-          <div className="site-footer__social-col">
-            <span className="footer-heading">FOLLOW ALONG</span>
+          <div>
+            <span className="footer-heading">SOCIAL</span>
             <div className="footer-links">
               {siteConfig.instagram ? <a href={siteConfig.instagram} target="_blank" rel="noreferrer">Instagram <ArrowUpRight size={13} /></a> : null}
               {siteConfig.facebook ? <a href={siteConfig.facebook} target="_blank" rel="noreferrer">Facebook <ArrowUpRight size={13} /></a> : null}
@@ -603,11 +515,7 @@ function Footer() {
             </div>
           </div>
         </div>
-        <div className="site-footer__bottom">
-          <span>© {new Date().getFullYear()} Topmax Executive Hotel & Suites</span>
-          <span>Hotel details will be updated once verified.</span>
-          <a href="#home">Back to top <ArrowUpRight size={14} /></a>
-        </div>
+        <div className="site-footer__bottom"><span>© {new Date().getFullYear()} Topmax Executive Hotel & Suites</span><span>Room and contact details shown when verified.</span><a href="#home">Back to top <ArrowUpRight size={14} /></a></div>
       </div>
     </footer>
   );
@@ -619,13 +527,11 @@ export default function App() {
       <Header />
       <main>
         <Hero />
-        <BookingForm />
-        <Introduction />
+        <About />
         <Rooms />
-        <Facilities />
+        <WhyStay />
+        <Booking />
         <Location />
-        <GuestStories />
-        <CallToAction />
         <Contact />
       </main>
       <Footer />

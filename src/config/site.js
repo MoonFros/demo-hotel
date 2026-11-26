@@ -1,26 +1,23 @@
 /**
- * Hotel details supplied so far. Add verified contact channels here before launch.
- * Leave unknown fields empty rather than publishing invented information.
+ * Hotel information supplied for the current site build.
+ * Add only verified contact details and property photography before launch.
  */
 export const siteConfig = {
   name: 'Topmax Executive Hotel & Suites',
   shortName: 'TOPMAX',
-  locationLine: 'BDPA, near UNIBEN · Benin City',
   address: 'BDPA, near the University of Benin (UNIBEN), Benin City, Edo State, Nigeria',
   mapSearch: 'BDPA, Benin City, Edo State, Nigeria',
   phone: '',
   email: '',
-  whatsapp: '', // International format, digits only, e.g. 2348012345678 — add only when verified.
+  whatsapp: '', // International format, digits only, e.g. 2348012345678.
   instagram: '',
   facebook: '',
 };
 
-// Local, generated illustrative placeholders. Replace with approved property photography when supplied.
+// Generated illustrative placeholders; swap these for approved photos of the actual property/rooms.
 export const hotelImages = {
-  hero: '/images/topmax-hero.jpg',
-  interior: '/images/placeholder-lounge.jpg',
-  roomOne: '/images/placeholder-suite.jpg',
-  roomTwo: '/images/placeholder-suite-detail.jpg',
-  lounge: '/images/placeholder-lounge.jpg',
-  closing: '/images/topmax-closing.jpg',
+  building: '/images/topmax-building-placeholder.jpg',
+  reception: '/images/topmax-reception-placeholder.jpg',
+  roomOne: '/images/room-placeholder-one.jpg',
+  roomTwo: '/images/room-placeholder-two.jpg',
 };
